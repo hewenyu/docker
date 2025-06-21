@@ -42,6 +42,22 @@ docker pull hewenyulucky/chattts-ui:cpu-latest
 docker pull hewenyulucky/chattts-ui:gpu-latest
 ```
 
+### 3. Clash
+
+Clash 是一个支持多平台的代理客户端。
+
+- **源代码仓库**: [doreamon-design/clash](https://github.com/doreamon-design/clash)
+- **DockerHub镜像**: `hewenyulucky/clash`
+- **标签**:
+  - `latest`: 最新版本
+  - `<tag>`: 对应源代码仓库的特定版本标签
+
+**使用方法**:
+
+```bash
+docker pull hewenyulucky/clash:latest
+```
+
 ## 自动化构建
 
 所有镜像每月自动从源代码仓库的最新标签构建并推送到DockerHub。也可以通过GitHub Actions手动触发构建。
