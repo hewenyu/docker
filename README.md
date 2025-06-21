@@ -44,4 +44,4 @@ docker pull hewenyulucky/chattts-ui:gpu-latest
 
 ## 自动化构建
 
-所有镜像每天自动从源代码仓库的最新标签构建并推送到DockerHub。也可以通过GitHub Actions手动触发构建。
+所有镜像每月自动从源代码仓库的最新标签构建并推送到DockerHub。也可以通过GitHub Actions手动触发构建。
