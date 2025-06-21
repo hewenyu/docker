@@ -3,8 +3,8 @@ name: Build and Push F5-TTS Docker Image
 on:
   workflow_dispatch:
   schedule:
-    # 每天凌晨2点运行
-    - cron: '0 2 * * *'
+    # 每月2号凌晨0点运行
+    - cron: '0 0 2 * *'
 
 env:
   DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}/f5-tts
