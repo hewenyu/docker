@@ -24,7 +24,9 @@ RUN apt-get update && apt-get install -y \
     liblapack-dev \
     libx11-dev \
     libgtk-3-dev \
-    ffmpeg \
+    # OpenFST libraries for pynini
+    libfst-dev \
+    libfst-tools \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -57,8 +59,13 @@ RUN conda run -n chattts pip install --upgrade pip
 RUN conda run -n chattts pip install --upgrade setuptools
 # Install Cython first (required for pynini)
 RUN conda run -n chattts pip install Cython
-# Install Python dependencies
-RUN conda run -n chattts pip install -r requirements.txt
+# Install OpenFST and Pynini via conda
+RUN conda install -c conda-forge -n chattts openfst=1.8.2 -y
+# Try installing pynini from conda-forge first
+RUN conda install -c conda-forge -n chattts pynini=2.1.5 -y || echo "Failed to install pynini from conda, will try to exclude it from pip requirements"
+# Install Python dependencies (with --no-deps for pynini to skip it if it fails)
+RUN grep -v "pynini" requirements.txt > requirements_no_pynini.txt || cp requirements.txt requirements_no_pynini.txt
+RUN conda run -n chattts pip install -r requirements_no_pynini.txt
 
 # WEB_ADDRESS: 0.0.0.0:9966
 ENV WEB_ADDRESS="0.0.0.0:9966"
