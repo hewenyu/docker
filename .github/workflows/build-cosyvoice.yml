@@ -33,3 +33,13 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:latest
+
+      - name: docker logout
+        run: |
+          docker logout
+
+      - name: Prune unused Docker data
+        run: |
+          docker system prune -af --volumes
+
+      
