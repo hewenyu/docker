@@ -53,8 +53,10 @@ WORKDIR /app
 COPY . /app/
 
 # Upgrade pip and install requirements in the conda environment
-RUN conda run -n chattts pip install --upgrade pip && \
-    if [ -f requirements.txt ]; then conda run -n chattts pip install -r requirements.txt; fi
+RUN conda run -n chattts pip install --upgrade pip
+RUn conda run -n chattts pip install --upgrade setuptools
+# Install Python dependencies
+RUN conda run -n chattts pip install -r requirements.txt
 
 # WEB_ADDRESS: 0.0.0.0:9966
 ENV WEB_ADDRESS="0.0.0.0:9966"
