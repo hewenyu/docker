@@ -1,6 +1,4 @@
-ARG PYTHON_VERSION=3.11
-ARG CUDA_VERSION=12.9.0
-FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu22.04
+FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-devel
 
 # Set non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -30,23 +28,6 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Miniconda
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    bash /tmp/miniconda.sh -b -p /opt/conda && \
-    rm /tmp/miniconda.sh
-
-# Add conda to path
-ENV PATH="/opt/conda/bin:${PATH}"
-
-# Initialize conda for shell interaction
-RUN conda init bash && \
-    echo "conda activate base" >> ~/.bashrc
-
-# Create conda environment with Python version
-RUN conda create -n chattts python=${PYTHON_VERSION} -y
-
-# Set up conda environment for use in Dockerfile
-ENV PATH="/opt/conda/envs/chattts/bin:${PATH}"
 
 # Set working directory
 WORKDIR /app
@@ -55,17 +36,7 @@ WORKDIR /app
 COPY . /app/
 
 # Upgrade pip and install requirements in the conda environment
-RUN conda run -n chattts pip install --upgrade pip
-RUN conda run -n chattts pip install --upgrade setuptools
-# Install Cython first (required for pynini)
-RUN conda run -n chattts pip install Cython
-# Install OpenFST and Pynini via conda
-RUN conda install -c conda-forge -n chattts openfst=1.8.2 -y
-# Try installing pynini from conda-forge first
-RUN conda install -c conda-forge -n chattts pynini=2.1.5 -y || echo "Failed to install pynini from conda, will try to exclude it from pip requirements"
-# Install Python dependencies (with --no-deps for pynini to skip it if it fails)
-RUN grep -v "pynini" requirements.txt > requirements_no_pynini.txt || cp requirements.txt requirements_no_pynini.txt
-RUN conda run -n chattts pip install -r requirements_no_pynini.txt
+RUN pip install -r requirements.txt
 
 # WEB_ADDRESS: 0.0.0.0:9966
 ENV WEB_ADDRESS="0.0.0.0:9966"
