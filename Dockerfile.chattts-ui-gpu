@@ -47,8 +47,8 @@ WORKDIR /app
 COPY . /app/
 
 # Upgrade pip and install requirements
-RUN python -m pip install --upgrade pip && \
-    if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+RUN python3.11 -m pip install --upgrade pip && \
+    if [ -f requirements.txt ]; then python3.11 -m pip install -r requirements.txt; fi
 
 # WEB_ADDRESS: 0.0.0.0:9966
 ENV WEB_ADDRESS="0.0.0.0:9966"
@@ -62,4 +62,4 @@ ENV HF_ENDPOINT=https://hf-mirror.com
 EXPOSE 9966
 
 # Set the entrypoint command (adjust based on actual application)
-CMD ["python", "app.py"]
+CMD ["python3.11", "app.py"]
