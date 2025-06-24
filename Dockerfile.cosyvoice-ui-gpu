@@ -38,10 +38,9 @@ WORKDIR /app
 COPY . /app/
 
 # Upgrade pip and install requirements
-RUN pip install --upgrade pip setuptools
-# Install pynini 2.1.5
-RUN pip install pynini==2.1.5
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir pynini==2.1.5 && \
+    pip install --no-cache-dir -r requirements.txt
 
 #  set hf-mirror
 ENV HF_ENDPOINT=https://hf-mirror.com
