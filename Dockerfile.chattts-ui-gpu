@@ -7,17 +7,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
-    software-properties-common \
-    && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update && apt-get install -y \
     git \
     wget \
     curl \
-    python3.11 \
-    python3.11-dev \
-    python3.11-venv \
-    python3-pip \
-    python3-setuptools \
     libgl1 \
     libglib2.0-0 \
     libsm6 \
@@ -36,9 +28,23 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set Python version
-RUN ln -sf /usr/bin/python3.11 /usr/bin/python && \
-    ln -sf /usr/bin/python3.11 /usr/bin/python3
+# Install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
+
+# Add conda to path
+ENV PATH="/opt/conda/bin:${PATH}"
+
+# Initialize conda for shell interaction
+RUN conda init bash && \
+    echo "conda activate base" >> ~/.bashrc
+
+# Create conda environment with Python version
+RUN conda create -n chattts python=${PYTHON_VERSION} -y
+
+# Set up conda environment for use in Dockerfile
+ENV PATH="/opt/conda/envs/chattts/bin:${PATH}"
 
 # Set working directory
 WORKDIR /app
@@ -46,9 +52,9 @@ WORKDIR /app
 # Copy application files
 COPY . /app/
 
-# Upgrade pip and install requirements
-RUN python3.11 -m pip install --upgrade pip && \
-    if [ -f requirements.txt ]; then python3.11 -m pip install -r requirements.txt; fi
+# Upgrade pip and install requirements in the conda environment
+RUN conda run -n chattts pip install --upgrade pip && \
+    if [ -f requirements.txt ]; then conda run -n chattts pip install -r requirements.txt; fi
 
 # WEB_ADDRESS: 0.0.0.0:9966
 ENV WEB_ADDRESS="0.0.0.0:9966"
@@ -61,5 +67,5 @@ ENV HF_ENDPOINT=https://hf-mirror.com
 # Default ports for webapp (adjust based on actual application)
 EXPOSE 9966
 
-# Set the entrypoint command (adjust based on actual application)
-CMD ["python3.11", "app.py"]
+# Set the entrypoint command to run in the conda environment
+CMD ["conda", "run", "--no-capture-output", "-n", "chattts", "python", "app.py"]
