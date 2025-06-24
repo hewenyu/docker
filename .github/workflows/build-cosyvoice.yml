@@ -17,38 +17,13 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          repository: 'FunAudioLLM/CosyVoice'
-          submodules: true
-          fetch-depth: 0
-          
-      - name: 获取最新 短 commit 
-        id: latest_commit
-        run: |
-          LATEST_COMMIT=$(git rev-parse HEAD)
-          echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_ENV
-          echo "Latest commit: $LATEST_COMMIT"
-
-      - name: 登录DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-            
-      # 检出自定义Dockerfile仓库
-      - name: 检出自定义Dockerfile仓库
-        uses: actions/checkout@v4
-        with:
-          repository: '${{ github.repository }}'
-          path: 'custom-dockerfile'
           fetch-depth: 0
           
       # 构建自定义GPU版本
       - name: 构建并推送自定义GPU版Docker镜像
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: custom-dockerfile/Dockerfile.cosyvoice-ui-gpu
+          file: Dockerfile.cosyvoice-ui-gpu
           push: true
           tags: |
-            ${{ env.DOCKER_IMAGE }}:custom-gpu-latest
-            ${{ env.DOCKER_IMAGE }}:custom-gpu-${{ env.LATEST_COMMIT }}
+            ${{ env.DOCKER_IMAGE }}:latest
