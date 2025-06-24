@@ -48,17 +48,13 @@ jobs:
         with:
           repository: '${{ github.repository }}'
           path: 'custom-dockerfile'
-          
-      # 复制应用代码到自定义Dockerfile目录
-      - name: 复制应用代码
-        run: |
-          cp custom-dockerfile/Dockerfile.chattts-ui-gpu ./Dockerfile.chattts-ui
+          fetch-depth: 0
           
       # 构建自定义GPU版本
       - name: 构建并推送自定义GPU版Docker镜像
         uses: docker/build-push-action@v5
         with:
-          file: ./Dockerfile.chattts-ui
+          file: custom-dockerfile/Dockerfile.chattts-ui-gpu
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:custom-gpu-latest
