@@ -51,4 +51,4 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:custom-gpu-latest
-            ${{ env.DOCKER_IMAGE }}:custom-gpu-${{ env.LATEST_TAG }}
+            ${{ env.DOCKER_IMAGE }}:custom-gpu-${{ env.LATEST_COMMIT }}
