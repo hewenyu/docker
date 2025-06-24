@@ -35,8 +35,11 @@ WORKDIR /app
 # Copy application files
 COPY . /app/
 
-# Upgrade pip and install requirements in the conda environment
+# Upgrade pip and install requirements
+RUN pip install --upgrade pip setuptools
 RUN pip install -r requirements.txt
+# Install specific version of transformers that has LogitsWarper
+RUN pip install transformers==4.44.0
 
 # WEB_ADDRESS: 0.0.0.0:9966
 ENV WEB_ADDRESS="0.0.0.0:9966"
@@ -49,5 +52,5 @@ ENV HF_ENDPOINT=https://hf-mirror.com
 # Default ports for webapp (adjust based on actual application)
 EXPOSE 9966
 
-# Set the entrypoint command to run in the conda environment
-CMD ["conda", "run", "--no-capture-output", "-n", "chattts", "python", "app.py"]
+# Set the entrypoint command
+CMD ["python", "app.py"]
