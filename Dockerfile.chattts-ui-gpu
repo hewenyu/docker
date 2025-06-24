@@ -54,7 +54,9 @@ COPY . /app/
 
 # Upgrade pip and install requirements in the conda environment
 RUN conda run -n chattts pip install --upgrade pip
-RUn conda run -n chattts pip install --upgrade setuptools
+RUN conda run -n chattts pip install --upgrade setuptools
+# Install Cython first (required for pynini)
+RUN conda run -n chattts pip install Cython
 # Install Python dependencies
 RUN conda run -n chattts pip install -r requirements.txt
 
