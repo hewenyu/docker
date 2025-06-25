@@ -24,7 +24,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-          
+
+      - name: 时间作为版本号
+        id: version
+        run: |
+          echo "VERSION=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+
       # 构建自定义GPU版本
       - name: 构建并推送自定义GPU版Docker镜像
         uses: docker/build-push-action@v5
@@ -33,6 +39,7 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
 
       - name: docker logout
         run: |
