@@ -58,5 +58,15 @@ jobs:
           file: custom-dockerfile/Dockerfile.chatTTS-gpu
           push: true
           tags: |
-            ${{ env.DOCKER_IMAGE }}:custom-gpu-latest
-            ${{ env.DOCKER_IMAGE }}:custom-gpu-${{ env.LATEST_TAG }}
+            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ env.LATEST_TAG }}
+
+      - name: docker logout
+        run: |
+          docker logout
+
+      - name: Prune unused Docker data
+        run: |
+          docker system prune -af --volumes
+    
+
