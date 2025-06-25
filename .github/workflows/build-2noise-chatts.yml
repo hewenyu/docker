@@ -55,7 +55,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: custom-dockerfile/Dockerfile.chatTTS-gpu
+          file: Dockerfile.chatTTS-gpu
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:latest
