@@ -2,9 +2,9 @@ name: Build and Push CosyVoice Docker Images
 
 on:
   workflow_dispatch:
-  schedule:
-    # 每月2号凌晨0点运行
-    - cron: '0 0 2 * *'
+  # schedule:
+  #   # 每月2号凌晨0点运行
+  #   - cron: '0 0 2 * *'
 
 env:
   DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}/cosyvoice

@@ -40,7 +40,7 @@ RUN wget --quiet https://github.com/conda-forge/miniforge/releases/latest/downlo
     conda create -y -n ${VENV} python=3.10 && \
     conda run -n ${VENV} conda install -y -c conda-forge pynini==2.1.5 && \
     # Clone repo and install python requirements
-    git clone --depth 1 --recursive https://github.com/FunAudioLLM/CosyVoice.git /workspace/CosyVoice && \
+    git clone --depth 1 --recursive https://github.com/hewenyu/CosyVoice.git -b api /workspace/CosyVoice && \
     cd /workspace/CosyVoice && \
     conda run -n ${VENV} pip install --no-cache-dir --timeout 100 -r requirements.txt
 
@@ -83,4 +83,6 @@ WORKDIR /workspace/CosyVoice
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # Default command to start a bash session in the activated environment
-CMD ["bash"]
+# python3 runtime/python/fastapi/server.py --port 50000 --model_dir /workspace/CosyVoice/pretrained_models/CosyVoice-300M-Instruct
+# CMD ["bash"]
+CMD ["python3", "runtime/python/fastapi/server.py", "--port", "50000", "--model_dir", "/workspace/CosyVoice/pretrained_models/CosyVoice-300M-Instruct"]
