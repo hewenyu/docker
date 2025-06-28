@@ -52,7 +52,7 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 USERNAME="yueban"
 echo "[INFO] Creating user '$USERNAME'..."
 
-if id "$USERNAME" &>/dev/null; then
+if id -u "$USERNAME" &>/dev/null; then
     echo "[INFO] User '$USERNAME' already exists. Skipping creation."
 else
     useradd -m -s /bin/bash "$USERNAME"
