@@ -17,17 +17,17 @@ jobs:
           repository: 'hewenyu/LingoSub'
           fetch-depth: 0
           
-      - name: 获取最新tag
-        id: latest_tag
+      - name: 获取最新commit
+        id: latest_commit
         run: |
-          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
-          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
-          echo "Latest tag: $LATEST_TAG"
-          
-      - name: 检出最新tag
+          LATEST_COMMIT=$(git rev-parse --short origin/HEAD)
+          echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_ENV
+          echo "Latest commit: $LATEST_COMMIT"
+
+      - name: 检出最新commit
         run: |
-          git checkout $LATEST_TAG
-          echo "已检出版本: $LATEST_TAG"
+          git checkout $LATEST_COMMIT
+          echo "已检出commit: $LATEST_COMMIT"
 
       - name: 登录DockerHub
         uses: docker/login-action@v3
@@ -38,9 +38,9 @@ jobs:
       - name: 构建并推送Docker镜像
         uses: docker/build-push-action@v5
         with:
-          context: ./lingosub-server
+          context: ./
           file: ./lingosub-server/Dockerfile
           push: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:latest
-            ${{ env.DOCKER_IMAGE }}:${{ env.LATEST_TAG }}
+            ${{ env.DOCKER_IMAGE }}:${{ env.LATEST_COMMIT }}
