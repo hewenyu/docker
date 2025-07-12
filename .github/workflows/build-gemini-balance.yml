@@ -46,8 +46,4 @@ jobs:
         run: |
           docker logout
 
-      - name: Prune unused Docker data
-        run: |
-          docker system prune -af --volumes
-
       
