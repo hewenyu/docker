@@ -1,0 +1,53 @@
+name: Build and Push Gemini Balance Docker Images
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   # 每月2号凌晨0点运行
+  #   - cron: '0 0 2 * *'
+
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}/gemini-balance
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: DOCKERHUB
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          repository: 'snailyp/gemini-balance'
+          fetch-depth: 0
+      
+      - name: 登录DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: 时间作为版本号
+        id: version
+        run: |
+          echo "VERSION=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+
+      # 构建docker
+      - name: 构建并推送Docker镜像
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile.cosyvoice-ui-gpu
+          push: true
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
+
+      - name: docker logout
+        run: |
+          docker logout
+
+      - name: Prune unused Docker data
+        run: |
+          docker system prune -af --volumes
+
+      
