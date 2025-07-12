@@ -15,8 +15,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'hewenyu/new-api'
-          ref: 'dev_20250712'
+          ref: 'dev'
           fetch-depth: 0
+
+      - name: Save version info
+        run: |
+          echo "alpha-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" > VERSION
 
       - name: 获取最新tag
         id: latest_tag
