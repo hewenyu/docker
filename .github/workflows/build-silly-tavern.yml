@@ -14,7 +14,7 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          repository: 'hewenyu/silly-tavern'
+          repository: 'SillyTavern/SillyTavern'
           ref: 'release'
           fetch-depth: 0
 
