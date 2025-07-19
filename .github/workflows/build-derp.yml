@@ -1,0 +1,41 @@
+name: Build and Push derp Docker Image
+
+on:
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}/derp
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: DOCKERHUB
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          repository: 'hewenyu/tailscale-derp'
+          ref: 'master'
+          fetch-depth: 0
+
+      - name: Save version info
+        run: |
+          echo "yueban-$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" > VERSION
+          echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+
+      - name: 登录DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: 构建并推送镜像
+        uses: docker/build-push-action@v5
+        with:
+          context: ./derper
+          file: ./derper/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
