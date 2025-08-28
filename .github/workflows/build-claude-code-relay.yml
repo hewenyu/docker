@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}//claude-relay
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}/claude-relay
 
 jobs:
   build-and-push:
