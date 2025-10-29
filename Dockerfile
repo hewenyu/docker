@@ -9,31 +9,17 @@ RUN apk add --no-cache curl gzip tar ca-certificates file
 # 创建工作目录
 WORKDIR /root/clash
 
-# 下载 Clash 二进制文件
-RUN curl -L "https://s.stotik.com/download/clash/1_18_0/clash-linux-amd64-v1.18.0.gz" -o clash-linux-amd64-v1.18.0.gz && \
-    echo "Downloaded file info:" && \
-    ls -lh clash-linux-amd64-v1.18.0.gz && \
-    file clash-linux-amd64-v1.18.0.gz && \
-    echo "First 100 bytes:" && \
-    head -c 100 clash-linux-amd64-v1.18.0.gz | od -A x -t x1z -v && \
-    if file clash-linux-amd64-v1.18.0.gz | grep -q "gzip compressed data"; then \
-        echo "Valid gzip file, decompressing..."; \
-        gzip -d clash-linux-amd64-v1.18.0.gz && \
-        chmod +x clash-linux-amd64-v1.18.0; \
-    else \
-        echo "ERROR: Downloaded file is not gzip format!"; \
-        echo "File content:"; \
-        cat clash-linux-amd64-v1.18.0.gz; \
-        exit 1; \
-    fi
+# 复制并解压 Clash 二进制文件
+COPY clash/clash-linux-amd64-v1.18.0.gz /root/clash/clash-linux-amd64-v1.18.0.gz
+RUN gzip -d /root/clash/clash-linux-amd64-v1.18.0.gz && \
+    chmod +x /root/clash/clash-linux-amd64-v1.18.0
 
-# 下载控制面板文件
-RUN curl -L "https://s.stotik.com/download/clash/1_18_0/clash-dashboard.tar.gz" -o clash-dashboard.tar.gz && \
-    tar xzf clash-dashboard.tar.gz && \
-    rm clash-dashboard.tar.gz
+# 复制并解压控制面板文件
+COPY clash/clash-dashboard.tar.gz /root/clash/clash-dashboard.tar.gz
+RUN tar xzf clash-dashboard.tar.gz && rm clash-dashboard.tar.gz
 
-# 下载 GeoIP 数据库文件
-RUN curl -L "https://s.stotik.com/download/clash/Country.mmdb" -o Country.mmdb
+# 复制 GeoIP 数据库文件
+COPY clash/Country.mmdb /root/clash/Country.mmdb
 
 # 暴露端口
 # 7890: HTTP/HTTPS 代理端口
