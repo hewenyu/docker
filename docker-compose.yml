@@ -1,21 +1,19 @@
-version: '3.8'
-
 services:
   clash:
     build: .
     container_name: clash
-    image: clash:latest
+    image: hewenyu/clash:stotik-v1.18.0
     restart: unless-stopped
 
     # 使用 host 网络模式以便代理功能正常工作
     # 如果不需要 host 模式，可以注释掉下面这行，并启用 ports 配置
-    network_mode: host
+    # network_mode: host
 
     # 如果不使用 host 模式，则启用以下端口映射
-    # ports:
-    #   - "7890:7890"  # HTTP/HTTPS 代理端口
-    #   - "7891:7891"  # SOCKS5 代理端口
-    #   - "9090:9090"  # 外部控制端口（Dashboard）
+    ports:
+      - "7890:7890"  # HTTP/HTTPS 代理端口
+      - "7891:7891"  # SOCKS5 代理端口
+      - "9091:9091"  # 外部控制端口（Dashboard）
 
     volumes:
       # 挂载配置文件（需要在宿主机上准备好 config.yaml）
@@ -29,17 +27,13 @@ services:
       # 时区设置
       - TZ=Asia/Shanghai
 
-    # 设置容器权限
-    cap_add:
-      - NET_ADMIN
-
-    # 健康检查
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 5s
+    # # 健康检查
+    # healthcheck:
+    #   test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9091"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 5s
 
 # 如果需要自定义网络，可以启用以下配置
 # networks:
