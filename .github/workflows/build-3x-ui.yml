@@ -1,0 +1,48 @@
+name: Build and Push 3x-ui Docker Image
+
+on:
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}/3x-ui
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: DOCKERHUB
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          repository: 'MHSanaei/3x-ui'
+          fetch-depth: 0
+
+      - name: 获取最新tag
+        id: latest_tag
+        run: |
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) || echo "latest")
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          echo "Latest tag: $LATEST_TAG"
+
+      - name: 检出最新tag
+        run: |
+          if [ "$LATEST_TAG" != "latest" ]; then
+            git checkout $LATEST_TAG
+            echo "已检出版本: $LATEST_TAG"
+          else
+            echo "未找到tag，使用最新主分支"
+          fi
+
+      - name: 登录DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: 构建并推送镜像
+        run: |
+          TAG=${LATEST_TAG:-latest}
+          docker build --no-cache -t $DOCKER_IMAGE:$TAG .
+          docker tag $DOCKER_IMAGE:$TAG $DOCKER_IMAGE:latest
+          docker push $DOCKER_IMAGE:$TAG
+          docker push $DOCKER_IMAGE:latest
