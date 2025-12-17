@@ -1,0 +1,13 @@
+services:
+  chromium:
+    image: hewenyulucky/chromium:latest
+    container_name: chromium
+    environment:
+      - LC_ALL=en-US.UTF-8
+      - CHROME_ARGS=--hide-scrollbars --timezone=America/New_York --fingerprint-platform=windows --fingerprint-brand=Chrome --force-webrtc-ip-handling-policy --webrtc-ip-handling-policy=disable_non_proxied_udp --proxy-server=socks5://用户名:密码@地址:端口
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./config:/config
+    shm_size: 1gb
+    restart: unless-stopped
