@@ -1,0 +1,39 @@
+name: Sync Chromium Docker Image
+
+on:
+  workflow_dispatch:
+
+env:
+  SOURCE_IMAGE: tumi/chromium:latest
+  DOCKER_IMAGE: ${{ secrets.DOCKER_USER }}/chromium
+
+jobs:
+  sync-image:
+    runs-on: ubuntu-latest
+    environment: DOCKERHUB
+    steps:
+      - name: 生成日期标签
+        run: |
+          DATE_TAG=$(date +'%Y-%m-%d')
+          echo "DATE_TAG=$DATE_TAG" >> $GITHUB_ENV
+          echo "Date tag: $DATE_TAG"
+
+      - name: 登录DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: 拉取源镜像
+        run: |
+          echo "Pulling source image: $SOURCE_IMAGE"
+          docker pull $SOURCE_IMAGE
+
+      - name: 重新标记并推送镜像
+        run: |
+          echo "Tagging and pushing to: $DOCKER_IMAGE"
+          docker tag $SOURCE_IMAGE $DOCKER_IMAGE:$DATE_TAG
+          docker tag $SOURCE_IMAGE $DOCKER_IMAGE:latest
+          docker push $DOCKER_IMAGE:$DATE_TAG
+          docker push $DOCKER_IMAGE:latest
+          echo "Successfully pushed images with tags: $DATE_TAG and latest"
